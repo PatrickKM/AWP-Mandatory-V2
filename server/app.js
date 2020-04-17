@@ -14,35 +14,42 @@ app.use(morgan('combined')); // Log all requests to the console
 app.use(express.static('../client/build')); // Needed for serving production build of React
 
 /**** Database ****/
-const kittenDB = require('./kitten_db')(mongoose);
+const questionDB = require('./question_db')(mongoose);
 
 /**** Routes ****/
-app.get('/api/kittens', async (req, res) => {
-    const kittens = await kittenDB.getKittens();
-    res.json(kittens);
+
+// GET Questions (all)
+app.get('/api/questions', async (req, res) => {
+    const questions = await questionDB.getQuestions();
+    res.json(questions);
 });
 
-app.get('/api/kittens/:id', async (req, res) => {
+// GET Question (by id)
+app.get('/api/questions/:id', async (req, res) => {
     let id = req.params.id;
-    const kitten = await kittenDB.getKitten(id);
-    res.json(kitten);
+    const question = await questionDB.getQuestion(id);
+    res.json(question);
 });
 
-app.post('/api/kittens', async (req, res) => {
-    let kitten = {
-        name : req.body.name,
-        hobbies : [] // Empty hobby array
+// POST Question
+app.post('/api/questions', async (req, res) => {
+    let question = {
+        question: req.body.question,
+        answers: []
     };
-    const newKitten = await kittenDB.createKitten(kitten);
-    res.json(newKitten);
+    const newQuestion = await questionDB.createQuestion(question);
+    res.json(newQuestion);
 });
 
-app.post('/api/kittens/:id/hobbies', async (req, res) => {
+// POST Answer (in id of Question)
+app.post('/api/questions/:id/answers', async (req, res) => {
     const id = req.params.id;
-    const hobby = req.body.hobby;
-    const updatedKitten = await kittenDB.addHobby(id, hobby);
-    res.json(updatedKitten);
+    const text = req.body.answerText;
+    const updatedQuestion = await questionDB.addAnswer(id, text);
+    res.json(updatedQuestion);
 });
+
+// PUT Vote (in id of question in id of Answer)
 
 // "Redirect" all get requests (except for the routes specified above) to React's entry point (index.html) to be handled by Reach router
 // It's important to specify this route as the very last one to prevent overriding all of the other routes
@@ -51,11 +58,11 @@ app.get('*', (req, res) =>
 );
 
 /**** Start ****/
-const url = process.env.MONGO_URL || 'mongodb://localhost/kitten_db';
+const url = process.env.MONGO_URL || 'mongodb://localhost/question_db';
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(async () => {
-        await kittenDB.bootstrap(); // Fill in test data if needed.
+        await questionDB.bootstrap(); // Fill in test data if needed.
         await app.listen(port); // Start the API
-        console.log(`Kitten API running on port ${port}!`);
+        console.log(`question API running on port ${port}!`);
     })
     .catch(error => console.error(error));

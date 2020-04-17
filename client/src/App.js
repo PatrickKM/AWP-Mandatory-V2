@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Router} from "@reach/router";
-import Kitten from "./Kitten";
-import Kittens from "./Kittens";
+import Questions from './Questions';
+import Question from './Question';
+import { Router } from "@reach/router";
+import AskQuestion from "./AskQuestion";
 
 class App extends Component {
     // API url from the file '.env' OR the file '.env.development'.
@@ -11,35 +12,90 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            kittens: []
-        };
+            questions: []
+        }
     }
 
     componentDidMount() {
         // Get everything from the API
-        this.getKittens().then(() => console.log("Kittens gotten!"));
+        this.getData().then(() => console.log("Questions gotten!"));
     }
 
-    async getKittens() {
-        let url = `${this.API_URL}/kittens`; // URL of the API.
+    async getData() {
+        let url = `${this.API_URL}/questions`; // URL of the API.
         let result = await fetch(url); // Get the data
         let json = await result.json(); // Turn it into json
         return this.setState({ // Set it in the state
-            kittens: json
+            questions: json
         })
     }
 
-    getKitten(id) {
-        // Find the relevant kitten by id
-        return this.state.kittens.find(k => k._id === id);
+    getQuestion(id) {
+        // Find the relevant question by id
+        const question = this.state.questions.find(q => q.id === parseInt(id));
+        return question;
+    }
+
+    async askQuestion(text) {
+        console.log("askQuestion", text);
+        const url = `${this.API_URL}/questions`;
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                text: text
+            })
+        });
+        const data = await response.json();
+        console.log("Printing the response:", data);
+        this.getData()
+    }
+
+    async postAnswer(id, text) {
+        console.log("postAnswer", id, text);
+        const url = `${this.API_URL}/questions/${id}/answers`;
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                text: text
+            })
+        });
+        const data = await response.json();
+        console.log("Printing the response:", data);
+        this.getData()
+    }
+
+    async putVote(id, aid) {
+        console.log("putVote", id, aid);
+        const url = `${this.API_URL}/questions/${id}/answers/${aid}`;
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT'
+        });
+        const data = await response.json();
+        console.log("Printing the response:", data);
+        this.getData()
     }
 
     render() {
         return (
             <>
+                <h1>QA</h1>
                 <Router>
-                    <Kitten path="/kitten/:id" getKitten={id => this.getKitten(id)}/>
-                    <Kittens path="/" kittens={this.state.kittens}/>
+                    <Questions path="/" data={this.state.questions}/>
+                    <Question path="/question/:id"
+                              getQuestion={id => this.getQuestion(id)}
+                              postAnswer={(id, text) => this.postAnswer(id, text)}
+                              putVote={(id, aid) => this.putVote(id, aid)}
+                    />
+                    <AskQuestion path="/new" askQuestion={(text) => this.askQuestion(text)}/>
                 </Router>
             </>
         );
