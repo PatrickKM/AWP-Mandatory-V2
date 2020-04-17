@@ -32,12 +32,14 @@ class App extends Component {
 
     getQuestion(id) {
         // Find the relevant question by id
-        const question = this.state.questions.find(q => q.id === parseInt(id));
+        const question = this.state.questions.find(
+            q => q._id === id
+        );
         return question;
     }
 
-    async askQuestion(text) {
-        console.log("askQuestion", text);
+    async askQuestion(question) {
+        console.log("askQuestion", question);
         const url = `${this.API_URL}/questions`;
         const response = await fetch(url, {
             headers: {
@@ -45,7 +47,7 @@ class App extends Component {
             },
             method: 'POST',
             body: JSON.stringify({
-                text: text
+                question: question
             })
         });
         const data = await response.json();
@@ -53,8 +55,8 @@ class App extends Component {
         this.getData()
     }
 
-    async postAnswer(id, text) {
-        console.log("postAnswer", id, text);
+    async postAnswer(id, answerText) {
+        console.log("postAnswer", id, answerText);
         const url = `${this.API_URL}/questions/${id}/answers`;
         const response = await fetch(url, {
             headers: {
@@ -62,7 +64,7 @@ class App extends Component {
             },
             method: 'POST',
             body: JSON.stringify({
-                text: text
+                answerText: answerText
             })
         });
         const data = await response.json();
@@ -92,7 +94,7 @@ class App extends Component {
                     <Questions path="/" data={this.state.questions}/>
                     <Question path="/question/:id"
                               getQuestion={id => this.getQuestion(id)}
-                              postAnswer={(id, text) => this.postAnswer(id, text)}
+                              postAnswer={(id, answerText) => this.postAnswer(id, answerText)}
                               putVote={(id, aid) => this.putVote(id, aid)}
                     />
                     <AskQuestion path="/new" askQuestion={(text) => this.askQuestion(text)}/>

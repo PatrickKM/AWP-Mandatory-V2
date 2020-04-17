@@ -41,15 +41,21 @@ app.post('/api/questions', async (req, res) => {
     res.json(newQuestion);
 });
 
-// POST Answer (in id of Question)
+// POST Answer (in id of question)
 app.post('/api/questions/:id/answers', async (req, res) => {
     const id = req.params.id;
-    const text = req.body.answerText;
-    const updatedQuestion = await questionDB.addAnswer(id, text);
-    res.json(updatedQuestion);
+    const answerText = req.body.answerText;
+    const updatedQuestion = await questionDB.addAnswer(id, answerText);
+    res.json({msg: "Answer added", question: updatedQuestion});
 });
 
 // PUT Vote (in id of question in id of Answer)
+app.put('/api/questions/:id/answers/:aid', (req, res) => {
+    const id = req.params.id;
+    const aid = req.params.aid;
+    const upvoteAnswer = questionDB.upVote(id, aid);
+    res.json({msg: "Answer updated", answer: upvoteAnswer});
+});
 
 // "Redirect" all get requests (except for the routes specified above) to React's entry point (index.html) to be handled by Reach router
 // It's important to specify this route as the very last one to prevent overriding all of the other routes

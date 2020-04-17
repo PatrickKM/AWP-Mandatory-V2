@@ -19,7 +19,7 @@ class Question extends Component {
             answers = question.answers.map(a =>
                     <li>
                         {a.answerText}
-                        <button onClick={_ => this.onSubmit(a.id)} >
+                        <button onClick={_ => this.onSubmit(a._id)} >
                             Likes: {a.votes}
                         </button>
                     </li>
@@ -37,7 +37,7 @@ class Question extends Component {
 
 
                 {/* PostAnswer */}
-                <PostAnswer id={id} postAnswer={(id, text) => this.props.postAnswer(id, text)}/>
+                <PostAnswer id={id} postAnswer={(id, answerText) => this.props.postAnswer(id, answerText)}/>
                 <br/><br/>
                 <Link to="/">Back</Link>
             </>

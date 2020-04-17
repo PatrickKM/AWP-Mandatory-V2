@@ -41,7 +41,7 @@ class Db {
         return await question.save();
     }
 
-    // POST Answer (in id of Question)
+    // POST Answer (in id of question)
     async addAnswer(questionId, text) {
         // TODO: Error handling
         const question = await this.getQuestion(questionId);
@@ -51,6 +51,22 @@ class Db {
 
         // const answer = question.answers.id(aid);
 
+        return await question.save();
+    }
+
+    // Postman Testing i Body (JSON):
+    // {
+    // 	"answerText": "test"
+    // }
+
+    // PUT Vote (in id of answer in id of question).
+    async upVote(id, aid) {
+        const question = await this.getQuestion(id);
+        const answer = question.answers.id(aid);
+
+        answer.votes++;
+
+        console.log(answer);
         return await question.save();
     }
 
