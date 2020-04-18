@@ -50,11 +50,11 @@ app.post('/api/questions/:id/answers', async (req, res) => {
 });
 
 // PUT Vote (in id of question in id of Answer)
-app.put('/api/questions/:id/answers/:aid', (req, res) => {
+app.put('/api/questions/:id/answers/:aid', async (req, res) => {
     const id = req.params.id;
     const aid = req.params.aid;
-    const upvoteAnswer = questionDB.upVote(id, aid);
-    res.json({msg: "Answer updated", answer: upvoteAnswer});
+    const upvoteAnswer = await questionDB.upVote(id, aid);
+    res.json({msg: "Answer upvoted", answers: upvoteAnswer});
 });
 
 // "Redirect" all get requests (except for the routes specified above) to React's entry point (index.html) to be handled by Reach router

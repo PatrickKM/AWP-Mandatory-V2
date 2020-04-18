@@ -63,9 +63,7 @@ class Db {
     async upVote(id, aid) {
         const question = await this.getQuestion(id);
         const answer = question.answers.id(aid);
-
         answer.votes++;
-
         console.log(answer);
         return await question.save();
     }
