@@ -1,5 +1,5 @@
 # AWP-Mandatory-V2
-AWP - Mandatory Assigment Version 2 - before MongoDB + Mongoose implementation.
+AWP - Mandatory Assigment Version 2 - after MongoDB + Mongoose implementation.
 
 --
 
